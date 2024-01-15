@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/notifai/serial"
 	"github.com/spf13/cobra"
+	"go.bug.st/serial"
 
-	ytypes "github.com/notifai/ymodem/types"
-	"github.com/notifai/ymodem/ymodem"
+	ytypes "github.com/moults31/ymodem/types"
+	"github.com/moults31/ymodem/ymodem"
 )
 
 func main() {
@@ -32,7 +32,10 @@ func main() {
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Open connection
-			connection, err := serial.OpenPort(serial.Config{Name: port, Baud: 115200})
+			mode := &serial.Mode{
+				BaudRate: 115200,
+			}
+			connection, err := serial.Open(port, mode)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -110,7 +113,10 @@ func main() {
 		Long:  ``,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Open connection
-			connection, err := serial.OpenPort(serial.Config{Name: port, Baud: 115200})
+			mode := &serial.Mode{
+				BaudRate: 115200,
+			}
+			connection, err := serial.Open(port, mode)
 			if err != nil {
 				log.Fatalln(err)
 			}
