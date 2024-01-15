@@ -8,7 +8,7 @@ import (
 
 	"github.com/howeyc/crc16"
 
-	ytypes "github.com/notifai/ymodem/types"
+	ytypes "github.com/moults31/ymodem/types"
 )
 
 const (
