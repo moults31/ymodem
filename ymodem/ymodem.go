@@ -30,6 +30,8 @@ type File struct {
 	bytesBar ytypes.Bar
 }
 
+func ChecksumCCITTFalse(data []byte) uint16 { return crc16.Update(0x0000, crc16.CCITTFalseTable, data) }
+
 func sendBlock(c io.ReadWriter, bs int, block uint8, data []byte) error {
 	var toSend bytes.Buffer
 
@@ -49,7 +51,7 @@ func sendBlock(c io.ReadWriter, bs int, block uint8, data []byte) error {
 		toSend.Write(buf)
 	}
 
-	crc := crc16.ChecksumCCITTFalse(toSend.Bytes()[3:])
+	crc := ChecksumCCITTFalse(toSend.Bytes()[3:])
 	toSend.Write([]byte{uint8(crc >> 8)})
 	toSend.Write([]byte{uint8(crc & 0x0FF)})
 
@@ -125,7 +127,7 @@ func ModemSend(c io.ReadWriter, progress ytypes.Progress, bs int, files []File) 
 				var send bytes.Buffer
 				send.WriteString(files[fi].Name)
 				send.WriteByte(0x0)
-				send.WriteString(fmt.Sprintf("%d ", len(files[fi].Data)))
+				send.WriteString(fmt.Sprintf("%d", len(files[fi].Data)))
 				if send.Len() < bs {
 					send.Write(padding[:bs-send.Len()])
 				}
@@ -310,7 +312,7 @@ func receivePacket(c io.ReadWriter, bs int) ([]byte, error) {
 	crc |= uint16(oBuffer[0])
 
 	// Calculate CRC
-	if crc16.ChecksumCCITTFalse(pData.Bytes()) != crc {
+	if ChecksumCCITTFalse(pData.Bytes()) != crc {
 		if _, err := c.Write([]byte{NAK}); err != nil {
 			return nil, err
 		}
